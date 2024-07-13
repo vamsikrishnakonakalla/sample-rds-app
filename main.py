@@ -64,7 +64,7 @@ for idx, dbPrefix in enumerate(engine_type_prefixes):
     }
     key = host+'_'+port+'_'+database
     base = declarative_base()
-    userModel = type('UserModel'+str(idx), (base), {
+    userModel = type('UserModel'+str(idx), (base,), {
       "__tablename__": 'userdata',
       "id": Column(Integer, primary_key=True),
       "name": Column(String()),
@@ -92,16 +92,6 @@ for cKey, cValue in configs.items():
 application = Flask(__name__)
 
 application.app_context().push()
-
-class UserModel(db.Model):
-    __tablename__ = 'userdata'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String())
-
-    def __init__(self, id,name):
-        self.id = id
-        self.name = name
 
 db.create_all()
 @application.route('/')
