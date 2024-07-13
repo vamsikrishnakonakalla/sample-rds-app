@@ -1,7 +1,7 @@
 import dotenv
+import json
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 import os
 from sqlalchemy import (String,
                         Integer,
@@ -41,7 +41,7 @@ secret_arn = os.environ['RDS_SECRETMANAGER_ARN']
 username_key = os.environ['RDS_DB_USERNAME']
 password_key = os.environ['RDS_DB_PASSWORD']
 
-secret = cache.get_secret_string(secret_arn)
+secret = json.loads(cache.get_secret_string(secret_arn))
 username = secret[username_key]
 password = secret[password_key]
 
@@ -69,19 +69,9 @@ for idx, dbPrefix in enumerate(engine_type_prefixes):
       "sqlalchemy.url": f"postgresql://{username}:{password}@{host}:{port}/{database}",
       "sqlalchemy.echo": False,
     }
-    key = host+'_'+port+'_'_database
+    key = host+'_'+port+'_'+database
     base = declarative_base()
-    userModel = type('UserModel'+idx, (UserModel, base), {
-      __tablename__ = 'userdata'
-
-      id = Column(db.Integer, primary_key=True)
-      name = Column(db.String())
-  
-      def __init__(self, id,name):
-          self.id = id
-          self.name = name
-        
-    })
+    userModel = type('UserModel'+str(idx), (UserModel, base), {})
     engine = engine_from_config(config)
     base.metadata.drop_all(bind=engine)
     base.metadata.create_all(bind=engine)
@@ -89,7 +79,7 @@ for idx, dbPrefix in enumerate(engine_type_prefixes):
       'userModel': userModel,
       'engine': engine
     }
-    binds['UserModel'+idx] = engine
+    binds['UserModel'+str(idx)] = engine
     configs[key] = config
 
 Session = sessionmaker(twophase=True)
