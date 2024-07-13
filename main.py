@@ -7,8 +7,7 @@ from sqlalchemy import (String,
                         Integer,
                         engine_from_config,
                         Column)
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import (sessionmaker, declarative_base)
       
 def get_instance_region():
   import requests
@@ -19,15 +18,9 @@ def get_instance_region():
   region = response_json.get("region")
   return(region)
 
-class UserModel():
-  __tablename__ = 'userdata'
-
-  id = Column(Integer, primary_key=True)
-  name = Column(String())
-
-  def __init__(self, id ,name):
-    self.id = id
-    self.name = name
+def userInit(self, id, name):
+  self.id = id
+  self.name = name
 
 import botocore 
 import botocore.session 
@@ -71,7 +64,12 @@ for idx, dbPrefix in enumerate(engine_type_prefixes):
     }
     key = host+'_'+port+'_'+database
     base = declarative_base()
-    userModel = type('UserModel'+str(idx), (UserModel, base), {})
+    userModel = type('UserModel'+str(idx), (base), {
+      "__tablename__": 'userdata',
+      "id": Column(Integer, primary_key=True),
+      "name": Column(String()),
+      "__init__": userInit
+    })
     engine = engine_from_config(config)
     base.metadata.drop_all(bind=engine)
     base.metadata.create_all(bind=engine)
