@@ -1,2 +1,8 @@
 python-dotenv
 psycopg2-binary
+flask
+flask_sqlalchemy
+requests
+sqlalchemy
+aws_secretsmanager_caching
+botocore
