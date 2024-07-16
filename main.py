@@ -114,7 +114,7 @@ def userDetails():
          stmt = select(cValue['userModel']).filter_by(id=id)
          result = session.get(cValue['userModel'], id)
          if result is not None:
-           results[cKey] = resp
+           results[cKey] = {id=result.id, name=result.name}
 
        results = jsonify(results)
        results.status_code = 200
