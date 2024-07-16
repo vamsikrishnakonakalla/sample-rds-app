@@ -80,7 +80,7 @@ for idx, dbPrefix in enumerate(engine_type_prefixes):
       'userModel': userModel,
       'engine': engine
     }
-    binds['UserModel'+str(idx)] = engine
+    binds[userModel] = engine
     configs[key] = config
 
 Session = sessionmaker(twophase=True)
@@ -88,9 +88,8 @@ Session.configure(binds=binds)
 session = Session()
 
 for cKey, cValue in configs.items():
-  user = cValue[userModel](id=1, name="test")
+  user = cValue['userModel'](id=1, name="test")
   session.add(user)
-  session.commit()
 
 application = Flask(__name__)
 
@@ -110,36 +109,19 @@ def userDetails():
           resp = jsonify({'message' : 'No Id to query'})
           resp.status_code = 400
           return resp
-
-       result = UserModel.query.filter_by(id=request.form.get('id')).first()
-       if result is None:
+       results = {}
+       for cKey, cValue in configs.items():
+         result = cValue['userModel'].queryfilter_by(id=request.form.get('id')).first()
+         if result is None:
           resp = jsonify({'message' : 'User Not Found'})
-          resp.status_code = 404
-          return resp
+           
+         resp = jsonify({'id':result.id,'name':result.name})
+         results[cKey] = resp
+         
+       result = UserModel.query.filter_by(id=request.form.get('id')).first()
        
-       resp = jsonify({'id':result.id,'name':result.name})
-       resp.status_code = 200
-       return resp
-
-    if request.method == 'POST':
-
-       if 'id' not in request.form or 'name' not in request.form:
-          resp = jsonify({'message' : 'No id or name field. Both necessary.'})
-          resp.status_code = 400
-          return resp
-
-       name = request.form.get('name')
-       id = request.form.get('id')
-       entry = UserModel(id=id,name=name)
-       db.session.add(entry)
-       db.session.commit()
-       resp = jsonify({'message' : 'User Added Successfully'})
-       resp.status_code = 201
-       return resp
-
-    resp = jsonify({'message' : 'Unsupported Method'})
-    resp.status_code = 400
-    return resp
+       results.status_code = 200
+       return results
 
 if __name__=="__main__":
     application.run()
