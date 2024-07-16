@@ -115,7 +115,9 @@ def userDetails():
          result = session.execute(stmt).one()
          if result is None:
           resp = jsonify({'message' : 'User Not Found'})
-           
+
+         print("result")
+         print(result)
          resp = jsonify({'id':result.id,'name':result.name})
          results[cKey] = resp
        
