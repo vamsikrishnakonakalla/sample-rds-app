@@ -110,7 +110,8 @@ def userDetails():
           return resp
        results = {}
        for cKey, cValue in configs.items():
-         result = cValue['userModel'].query.filter_by(id=id).first()
+         stmt = session.select(cValue['userModel']).filter_by(id=id)
+         result = session.execute(stmt).one()
          if result is None:
           resp = jsonify({'message' : 'User Not Found'})
            
