@@ -99,18 +99,18 @@ application.app_context().push()
 def index():
     return jsonify({'hello': 'world'})
 
-@application.route('/user',methods=['GET','POST'])
+@application.route('/user',methods=['GET'])
 def userDetails():
-
+    
     if request.method == 'GET':
-
-       if 'id' not in request.form:
+       id = request.args.get('id', default=0, type = int)
+       if id == 0:
           resp = jsonify({'message' : 'No Id to query'})
           resp.status_code = 400
           return resp
        results = {}
        for cKey, cValue in configs.items():
-         result = cValue['userModel'].queryfilter_by(id=request.form.get('id')).first()
+         result = cValue['userModel'].queryfilter_by(id=id).first()
          if result is None:
           resp = jsonify({'message' : 'User Not Found'})
            
