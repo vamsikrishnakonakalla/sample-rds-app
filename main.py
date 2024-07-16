@@ -1,4 +1,4 @@
- import dotenv
+import dotenv
 import json
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -7,7 +7,9 @@ from sqlalchemy import (String,
                         Integer,
                         engine_from_config,
                         Column)
+from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.orm import (sessionmaker, declarative_base)
+
       
 def get_instance_region():
   import requests
@@ -45,7 +47,7 @@ engine_type_prefixes = [
   "RDS_MARIADB_",
   "RDS_POSTGRESQL_",
   "RDS_ORACLE_",
-  "RDS_SQLSERVER_",
+  "RDS_SQLSERVER_",h
   "RDS_DB2_"
 ]
 
@@ -71,6 +73,7 @@ for idx, dbPrefix in enumerate(engine_type_prefixes):
       "__init__": userInit
     })
     engine = engine_from_config(config)
+    if not database_exists(engine.url): create_database(engine.url)
     base.metadata.drop_all(bind=engine)
     base.metadata.create_all(bind=engine)
     config = {
