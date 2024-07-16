@@ -6,6 +6,7 @@ import os
 from sqlalchemy import (String,
                         Integer,
                         engine_from_config,
+                        select,
                         Column)
 from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.orm import (sessionmaker, declarative_base)
@@ -110,7 +111,7 @@ def userDetails():
           return resp
        results = {}
        for cKey, cValue in configs.items():
-         stmt = session.select(cValue['userModel']).filter_by(id=id)
+         stmt = select(cValue['userModel']).filter_by(id=id)
          result = session.execute(stmt).one()
          if result is None:
           resp = jsonify({'message' : 'User Not Found'})
