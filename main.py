@@ -112,15 +112,11 @@ def userDetails():
        results = {}
        for cKey, cValue in configs.items():
          stmt = select(cValue['userModel']).filter_by(id=id)
-         result = session.execute(stmt).one()
-         if result is None:
-          resp = jsonify({'message' : 'User Not Found'})
+         result = session.get(cValue['userModel'], id)
+         if result is not None:
+           results[cKey] = resp
 
-         print("result")
-         print(result)
-         resp = jsonify({'id':result.id,'name':result.name})
-         results[cKey] = resp
-       
+       results = jsonify(results)
        results.status_code = 200
        return results
 
