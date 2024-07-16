@@ -110,14 +110,12 @@ def userDetails():
           return resp
        results = {}
        for cKey, cValue in configs.items():
-         result = cValue['userModel'].queryfilter_by(id=id).first()
+         result = cValue['userModel'].query.filter_by(id=id).first()
          if result is None:
           resp = jsonify({'message' : 'User Not Found'})
            
          resp = jsonify({'id':result.id,'name':result.name})
          results[cKey] = resp
-         
-       result = UserModel.query.filter_by(id=request.form.get('id')).first()
        
        results.status_code = 200
        return results
