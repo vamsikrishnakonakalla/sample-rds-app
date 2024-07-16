@@ -95,7 +95,6 @@ application = Flask(__name__)
 
 application.app_context().push()
 
-db.create_all()
 @application.route('/')
 def index():
     return jsonify({'hello': 'world'})
