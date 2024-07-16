@@ -47,7 +47,7 @@ engine_type_prefixes = [
   "RDS_MARIADB_",
   "RDS_POSTGRESQL_",
   "RDS_ORACLE_",
-  "RDS_SQLSERVER_",h
+  "RDS_SQLSERVER_",
   "RDS_DB2_"
 ]
 
