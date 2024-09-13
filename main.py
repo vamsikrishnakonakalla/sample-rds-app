@@ -11,16 +11,6 @@ from sqlalchemy import (String,
 from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.orm import (sessionmaker, declarative_base)
 
-      
-def get_instance_region():
-  import requests
-  instance_identity_url = "http://169.254.169.254/latest/dynamic/instance-identity/document"
-  session = requests.Session()
-  r = requests.get(instance_identity_url)
-  response_json = r.json()
-  region = response_json.get("region")
-  return(region)
-
 def userInit(self, id, name):
   self.id = id
   self.name = name
@@ -29,7 +19,7 @@ import botocore
 import botocore.session 
 from aws_secretsmanager_caching import SecretCache, SecretCacheConfig 
 
-client = botocore.session.get_session().create_client('secretsmanager', get_instance_region())
+client = botocore.session.get_session().create_client('secretsmanager', os.environ['AWS_REGION'])
 cache_config = SecretCacheConfig()
 cache = SecretCache( config = cache_config, client = client)
 
